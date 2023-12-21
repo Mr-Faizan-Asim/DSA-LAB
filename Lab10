@@ -1,0 +1,289 @@
+#pragma once
+
+#include<iostream>
+#include<queue>
+
+using namespace std;
+
+template <typename T>
+class Node
+{
+public:
+	Node<T>* left;
+	Node<T>* right;
+	T data;
+	Node(T data)
+	{
+		this->data = data;
+		left = nullptr;
+		right = nullptr;
+	}
+
+};
+
+template <typename T>
+class lab10
+{
+public:
+	Node<T>* root;
+	int numberofEdges;
+	int count = 0;
+
+	BST() { root = nullptr; }
+	// insert without root
+	void insert(T data)
+	{
+		Node<T>* node = new Node<T>(data);
+		insertion(root, data);
+
+	}
+	//insert with root as parameter  use & this to pass it by reference
+	void insertion(Node<T>*& node, T data)
+	{
+		if (node == nullptr)
+		{
+			node = new Node<T>(data);
+			count++;
+			return;
+		}
+		if (node->data < data) {
+			insertion(node->right, data);
+		}
+		else
+		{
+			insertion(node->left, data);
+		}
+	}
+	// Simple Print By order
+	void print()
+	{
+		levelOrder(root);
+	}
+	// Print BST by Choice()
+	void print(int way)
+	{
+		if (way == 1)
+		{
+			inorder(root);
+		}
+		else if (way == 2)
+		{
+			preorder(root);
+		}
+		else if (way == 3)
+		{
+			postorder(root);
+		}
+	}
+// Question No 4
+	// inorder traversel
+	void inorder(Node<T>* node)
+	{
+		if (node == nullptr)
+			return;
+		inorder(node->left);
+		cout << node->data << " ";
+		inorder(node->right);
+
+	}
+	// postorder print
+	void preorder(Node<T>* node)
+	{
+		if (node == nullptr)
+			return;
+		cout << node->data << " ";
+		preorder(node->left);
+		preorder(node->right);
+	}
+	// post order print
+	void postorder(Node<T>* node)
+	{
+		if (node == nullptr)
+			return;
+
+		postorder(node->left);
+		postorder(node->right);
+		cout << node->data << " ";
+	}
+	// level order Traversal
+	void levelOrder(Node<T>* node)
+	{
+		queue<Node<T>*> tempQue;
+		tempQue.push(node);
+		while (tempQue.empty() == false)
+		{
+			Node<T>* node = tempQue.front();
+			cout << node->data << " ";
+			tempQue.pop();
+			if (node->left != nullptr)
+				tempQue.push(node->left);
+			if (node->right != nullptr)
+				tempQue.push(node->right);
+		}
+	}
+// Question 6
+	void Even_Counts(Node<T>* node,int &c)
+	{
+		if (node == nullptr)
+			return;
+		if (root->data % 2 == 0)
+			c++;
+		Even_Counts(node->left,c);
+		Even_Counts(node->right,c);
+	}
+// quesron 7
+	int treeHeight()
+	{
+			if (root == nullptr)
+			{
+				return 0;
+			}
+			int left = leavesCount(root->left);
+			int right = leavesCount(root->right);
+			if (left > right)
+				return 1 + left
+				;
+			else
+				return 1 + right;
+			return 0;
+		
+	}
+// validator
+	bool ValidateBST()
+	{
+		if (treeHeight() == count)
+		{
+			return false;
+		}
+		return true;
+	}
+// Question number 9
+	// Heap Sort
+	void heapSort(T arr[], int size)
+	{
+		int n = size;
+		// This loop is used to creat a max heap tree or array
+		for (int i = n / 2 - 1; i >= 0; i--)
+		{
+			heapify(arr, n, i);
+		}
+		for (int i = n - 1; i > 0; i--)
+		{
+			swap(arr[0], arr[i]);
+			heapify(arr, i, 0);
+		}
+	}
+	// heapify {1,3,4,5,10} it runs untill i become the largest
+	void heapify(T arr[], int n, int i)
+	{
+		int largest = i;
+		int  l = 2 * i + 1;
+		int  r = 2 * i + 2;
+		if (l < n && arr[l] > arr[largest])
+			largest = l;
+		if (r < n && arr[r] > arr[largest])
+			largest = r;
+
+		if (largest != i)
+		{
+			swap(arr[i], arr[largest]);
+			heapify(arr, n, largest);
+		}
+
+	}
+	// question number 10
+	int internalNodeCount()
+	{
+		return count - 1;
+	}
+	// 11
+	voi printTree(Node<T>* root)
+	{
+		
+		if (root == nullptr) {
+			return result;
+		}
+
+		queue<TreeNode*> tempQueue;
+		tempQueue.push(root);
+
+		int levelSize = 1;
+
+		while (!tempQueue.empty()) {
+			
+			for (int i = 0; i < levelSize; ++i) {
+				Node<T>* node = tempQueue.front();
+				tempQueue.pop();
+
+				cout << node->data <<" ";
+				if (node->left != nullptr) {
+					tempQueue.push(node->left);
+				}
+				if (node->right != nullptr) {
+					tempQueue.push(node->right);
+				}
+			}
+			cout << endl;
+			levelSize = tempQueue.size();  // Update levelSize for the next level
+		}
+
+	}
+	// 12
+	int leavesCount(Node* root)
+	{
+		if (root == nullptr)
+		{
+			return 0;
+		}
+		if (root->left == nullptr && root->right == nullptr)
+		{
+			return 1;
+		}
+		int left = leavesCount(root->left);
+		int right = leavesCount(root->right);
+	
+		return left + right;
+	}
+
+};
+
+
+
+// Question no 3
+bool IdenticalTrees(Node<int>* t, Node<int>* x,int count, int& check)
+{
+	if (t->data == x->data)
+	{
+		check++;
+		IdenticalTrees(t->left, x->left,count,check);
+		IdenticalTrees(t->right, x->right, count, check);
+
+	}
+	else if (count == check)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
+}
+
+/**
+2. Insert in BST:
+https://leetcode.com/problems/insert-into-a-binary-search-tree/
+
+
+4. Implement the following tree traversals and print trees in following orders.
+a.
+https://leetcode.com/problems/binary-tree-inorder-traversal/
+b.
+https://leetcode.com/problems/binary-tree-postorder-traversal/
+c.
+https://leetcode.com/problems/binary-tree-preorder-traversal/
+
+5. Level order traversal:
+https://leetcode.com/problems/binary-tree-level-order-traversal/
+ 
+**/
